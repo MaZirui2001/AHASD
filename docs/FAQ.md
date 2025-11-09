@@ -405,39 +405,3 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 4. System information
 5. Relevant log files
 
----
-
-## 📚 Academic Usage
-
-### Q: How do I cite this work?
-
-**A**:
-```bibtex
-@inproceedings{ahasd2024,
-  title={AHASD: Asynchronous Heterogeneous Architecture for 
-         LLM Speculative Decoding on Mobile Devices},
-  author={Your Name and Others},
-  booktitle={Conference Name},
-  year={2024}
-}
-```
-
-### Q: Can I use this for my thesis/dissertation?
-
-**A**: Yes! Please cite appropriately and acknowledge the original authors.
-
-### Q: Can I build upon this work?
-
-**A**: Yes! This is open-source research software. We encourage:
-- Extensions and improvements
-- Integration with other systems
-- Novel applications
-- Comparative studies
-
-Please cite our work if you use or build upon it.
-
----
-
-**Last Updated**: November 2024  
-**Version**: 1.0
-
