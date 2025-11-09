@@ -1,0 +1,54 @@
+name: AHASD CI
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    name: Validate Project Structure
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: recursive
+    
+    - name: Setup Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Validate hardware costs
+      run: |
+        python3 scripts/validate_hardware_costs.py
+    
+    - name: Check AHASD modules
+      run: |
+        test -f ONNXim/src/AHASDIntegration.h || exit 1
+        test -f ONNXim/src/async_queue/EDC.h || exit 1
+        test -f ONNXim/src/async_queue/TVC.h || exit 1
+        test -f PIMSimulator/src/AAU.h || exit 1
+        test -f PIMSimulator/src/GatedTaskScheduler.h || exit 1
+        echo "✓ All AHASD modules present"
+    
+    - name: Run end-to-end test
+      run: |
+        bash scripts/test_e2e.sh
+
+  documentation:
+    name: Check Documentation
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Verify documentation files
+      run: |
+        for doc in QuickStart Installation HardwareComponents Experiments FAQ; do
+          test -f "docs/${doc}.md" || exit 1
+        done
+        echo "✓ All documentation files present"
+
