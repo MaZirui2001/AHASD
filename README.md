@@ -121,7 +121,6 @@ AHASD/
 - [Installation](docs/Installation.md) - Detailed setup
 - [Configuration](docs/Configuration.md) - Customize experiments
 - [Hardware Components](docs/HardwareComponents.md) - EDC, TVC, AAU specs
-- [XiangShan Integration](docs/XiangShanIntegration.md) - CPU control logic
 - [Experiments](docs/Experiments.md) - Reproduce results
 - [FAQ](docs/FAQ.md) - Common questions
 
