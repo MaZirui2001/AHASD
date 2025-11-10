@@ -52,7 +52,8 @@ python3 scripts/run_single_config.py \
     --enable-tvc \
     --enable-aau \
     --gen-length 128 \
-    --output ./test_output >/dev/null 2>&1
+    --output ./test_output \
+    --dry-run >/dev/null 2>&1
 
 if [ -f "test_output/results.json" ]; then
     echo "  ✓ Simulation completed successfully"

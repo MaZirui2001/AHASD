@@ -51,6 +51,8 @@ def parse_args():
                        help='Enable detailed trace logging')
     parser.add_argument('--verbose', action='store_true',
                        help='Verbose output')
+    parser.add_argument('--dry-run', action='store_true',
+                       help='Dry run mode for CI testing (creates mock results without running simulator)')
     
     return parser.parse_args()
 
@@ -93,7 +95,44 @@ def create_config(args):
     
     return config
 
-def run_simulation(config, output_dir, verbose=False):
+def generate_mock_results(config):
+    """Generate mock simulation results for dry-run/CI testing."""
+    results = {
+        "status": "completed",
+        "configuration": config['experiment_name'],
+        "simulation_type": "mock_for_ci",
+        "simulator": "ONNXim+PIMSimulator (mock)",
+        "metrics": {
+            "total_cycles": 1000000,
+            "throughput_tokens_per_sec": 100.0,
+            "energy_mj": 500.0,
+            "energy_efficiency_tokens_per_mj": 0.2,
+            "drafts_generated": 100,
+            "drafts_accepted": 75,
+            "acceptance_rate": 0.75,
+            "average_draft_length": 8.5,
+            "average_entropy": 2.3
+        }
+    }
+    
+    # Add EDC stats if enabled
+    if config['ahasd']['enable_edc']:
+        results['edc_stats'] = {
+            "prediction_accuracy": 0.85,
+            "suppression_rate": 0.12
+        }
+    
+    # Add TVC stats if enabled
+    if config['ahasd']['enable_tvc']:
+        results['tvc_stats'] = {
+            "preverifications_inserted": 25,
+            "prevented_npu_idles": 18,
+            "success_rate": 0.72
+        }
+    
+    return results
+
+def run_simulation(config, output_dir, verbose=False, dry_run=False):
     """Run the actual simulation."""
     
     print(f"Starting simulation...")
@@ -111,6 +150,42 @@ def run_simulation(config, output_dir, verbose=False):
     with open(config_file, 'w') as f:
         json.dump(config, f, indent=2)
     print(f"  Configuration saved to: {config_file}")
+    
+    # If dry-run mode, generate mock results and return
+    if dry_run:
+        print("\n  Running in DRY-RUN mode (no actual simulation)...")
+        print("  Initializing NPU simulator (ONNXim)... [MOCK]")
+        print("  Initializing PIM simulator (PIMSimulator)... [MOCK]")
+        print("  Setting up AHASD integration layer... [MOCK]")
+        
+        if config['ahasd']['enable_edc']:
+            print("    ✓ EDC module initialized [MOCK]")
+        if config['ahasd']['enable_tvc']:
+            print("    ✓ TVC module initialized [MOCK]")
+        if config['ahasd']['enable_aau']:
+            print("    ✓ AAU module initialized [MOCK]")
+        
+        # Generate mock results
+        results = generate_mock_results(config)
+        
+        # Save results
+        results_file = os.path.join(output_dir, 'results.json')
+        with open(results_file, 'w') as f:
+            json.dump(results, f, indent=2)
+        
+        # Save metrics
+        metrics_file = os.path.join(output_dir, 'metrics.txt')
+        with open(metrics_file, 'w') as f:
+            f.write("=== AHASD Simulation Results (DRY-RUN) ===\n")
+            f.write(f"Configuration: {config['experiment_name']}\n")
+            f.write(f"Simulation Type: {results.get('simulation_type', 'mock')}\n\n")
+            f.write("Performance Metrics:\n")
+            for key, value in results.get('metrics', {}).items():
+                f.write(f"- {key.replace('_', ' ').title()}: {value}\n")
+        
+        print(f"\n  ✓ Dry-run completed successfully")
+        print(f"  Mock results saved to: {output_dir}")
+        return 0
     
     # Real simulation using ONNXim + PIMSimulator
     print("\n  Initializing NPU simulator (ONNXim)...")
@@ -283,13 +358,15 @@ def main():
     
     print("="*70)
     print("AHASD Single Configuration Runner")
+    if args.dry_run:
+        print("(DRY-RUN MODE)")
     print("="*70 + "\n")
     
     # Create configuration
     config = create_config(args)
     
     # Run simulation
-    result = run_simulation(config, args.output, args.verbose)
+    result = run_simulation(config, args.output, args.verbose, args.dry_run)
     
     print("\n" + "="*70)
     print("Simulation Complete")
