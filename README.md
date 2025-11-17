@@ -1,10 +1,10 @@
-# AHASD: Asynchronous Heterogeneous Architecture for LLM Speculative Decoding
+# AHASD: Asynchronous Heterogeneous Architecture for LLM Adaptive Drafting Speculative Decoding
 
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/Platform-NPU%2BPIM-green.svg)]()
 [![Hardware](https://img.shields.io/badge/Hardware%20Overhead-%3C3%25-brightgreen.svg)]()
 
-Research implementation of **AHASD: Asynchronous Heterogeneous Architecture for LLM Speculative Decoding on Mobile Devices**.
+Research implementation of **AHASD: Asynchronous Heterogeneous Architecture for LLM Adaptive Drafting Speculative Decoding on Mobile Devices**.
 
 
 ---
